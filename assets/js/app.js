@@ -18,25 +18,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // - Update nextTaskId so it doesn't conflict
   // - Show tasks on the page
   // TODO: Load tasks and render them
-
-
+  tasks = loadTasks();
+  // Update nextTaskId to avoid ID conflicts
+  if (tasks.length > 0) {
+  nextTaskId =
+    Math.max(...tasks.map(task => Number(task.id) || 0)) + 1;
+}
+renderTasks(tasks, taskList, emptyState);
 
   // When the user submits the form to add a task:
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    // What should happen here:
-    // - Read values from the form (title, category, due date)
-    // - Validate that the title is not empty
-    // - Create a new task object
-    // - Add it to the tasks array
-    // - Save updated tasks to localStorage
-    // - Update the page to show the new task
-    // - Clear the form
-    // TODO: Add a new task
+    const titleInput = document.getElementById("task-title");
+    const categoryInput = document.getElementById("task-category");
+    const dueDateInput = document.getElementById("task-due-date");
+
+    const title = titleInput.value.trim();
+    const category = categoryInput.value.trim();
+    const dueDate = dueDateInput.value; // "YYYY-MM-DD" or ""
+
+    if (!title) {
+      alert("Please enter a task title.");
+      titleInput.focus();
+      return;
+  }
+
+    const newTask = {
+      id: nextTaskId++,
+      title,
+      category: category || "",
+      dueDate: dueDate || "",
+      completed: false,
+    };
+
+    tasks.push(newTask);
+
+    saveTasks(tasks);
+    renderTasks(tasks, taskList, emptyState);
+    clearTaskForm(form);
   });
-
-
 
   // When clicking inside the task list (“event delegation”):
   taskList.addEventListener("click", (event) => {
@@ -48,22 +69,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // If the checkbox was clicked:
     if (target.classList.contains("task-checkbox")) {
-      // What should happen here:
-      // - Find the matching task in the array
-      // - Toggle its completed state
-      // - Save updated tasks
-      // - Update the page
-      // TODO: Toggle completed state
+      const task = tasks.find((t) => Number(t.id) === taskId);
+      if (!task) return;
+
+      task.completed = !task.completed;
+
+      saveTasks(tasks);
+      renderTasks(tasks, taskList, emptyState);
       return;
     }
 
     // If the delete button was clicked:
     if (target.classList.contains("task-delete-btn")) {
-      // What should happen here:
-      // - Remove the task from the tasks array
-      // - Save updated tasks
-      // - Update the page
-      // TODO: Delete the task
+        tasks = tasks.filter((t) => Number(t.id) !== taskId);
+
+      saveTasks(tasks);
+      renderTasks(tasks, taskList, emptyState);
       return;
     }
   });

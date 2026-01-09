@@ -60,8 +60,24 @@ EXPECTED OUTPUT OF renderTasks():
 // - Add each <li> to the <ul>
 // - Show the empty state message when there are no tasks
 function renderTasks(tasks, listElement, emptyStateElement) {
-  // TODO: Implement rendering logic
-}
+  // Clear the current list first (removes the placeholder too)
+  listElement.innerHTML = "";
+
+  // Show empty state if there are no tasks
+  if (tasks.length === 0) {
+    emptyStateElement.style.display = "block";
+    return;
+  }
+
+  // Hide empty state if there are tasks
+  emptyStateElement.style.display = "none";
+
+  // Create and add a list item for each task
+  tasks.forEach(task => {
+    const taskEl = createTaskElement(task);
+    listElement.appendChild(taskEl);
+  });
+  }
 
 
 // This function should:
@@ -71,7 +87,66 @@ function renderTasks(tasks, listElement, emptyStateElement) {
 // - Make the checkbox checked if the task is completed
 // - NOT add event listeners (app.js will handle that)
 function createTaskElement(task) {
-  // TODO: Implement element creation logic
+  const li = document.createElement("li");
+  li.classList.add("task-item");
+  li.dataset.id = task.id;
+
+  if (task.completed) {
+  li.classList.add("completed");
+}
+
+  // Left wrapper
+  const left = document.createElement("div");
+  left.classList.add("task-item-left");
+
+  // Checkbox
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.classList.add("task-checkbox");
+  checkbox.checked = task.completed;
+
+  // Main wrapper
+  const main = document.createElement("div");
+  main.classList.add("task-main");
+
+  // Title
+  const title = document.createElement("p");
+  title.classList.add("task-title");
+  title.textContent = task.title;
+  main.appendChild(title);
+
+  // Meta
+   if (task.category || task.dueDate) {
+    const meta = document.createElement("p");
+    meta.classList.add("task-meta");
+
+    const parts = [];
+    if (task.category) parts.push(task.category);
+    if (task.dueDate) parts.push(task.dueDate);
+
+    meta.textContent = parts.join(" • ");
+    main.appendChild(meta);
+  }
+
+    // Assemble left side
+  left.appendChild(checkbox);
+  left.appendChild(main);
+
+  // Actions wrapper
+  const actions = document.createElement("div");
+  actions.classList.add("task-actions");
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.type = "button";
+  deleteBtn.classList.add("task-delete-btn");
+  deleteBtn.textContent = "Delete";
+  actions.appendChild(deleteBtn);
+
+  // Assemble <li>
+  li.appendChild(left);
+  li.appendChild(actions);
+
+  return li;
 }
 
 
@@ -80,5 +155,7 @@ function createTaskElement(task) {
 // - Reset the form
 // - Put focus back on the task title input
 function clearTaskForm(form) {
-  // TODO: Reset the form and focus the title input
+  form.reset();
+  const titleInput = document.getElementById("task-title");
+  if (titleInput) titleInput.focus();
 }

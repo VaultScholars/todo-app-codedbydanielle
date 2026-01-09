@@ -123,3 +123,13 @@
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
+
+/* Completed task styling */
+.task-item.completed .task-title {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.task-item.completed .task-meta {
+  opacity: 0.5;
+}
